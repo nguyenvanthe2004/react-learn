@@ -1,9 +1,16 @@
 import { Bell, Search, TextAlignJustify } from "lucide-react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../redux/slices/currentUser";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../redux/store";
 
 export default function Header({ toggle }: { toggle: () => void }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state: RootState) => state.auth.currentUser);
+
   return (
     <header className="flex items-center justify-between bg-white border-b border-slate-200 px-4 h-16 shrink-0">
       <div className="flex items-center gap-3">
@@ -33,9 +40,15 @@ export default function Header({ toggle }: { toggle: () => void }) {
         <Menu as="div" className="relative inline-block">
           <MenuButton className="flex items-center gap-2 rounded-full pl-1 pr-3 py-1 bg-white hover:bg-slate-50 shadow-sm transition-colors">
             <div className="w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-300/40 flex items-center justify-center">
-              <span className="text-indigo-600 text-xs font-semibold">U</span>
+              <span className="text-indigo-600 text-xs font-semibold">
+                {user.userName.charAt(0).toUpperCase()}
+              </span>
             </div>
-            <span className="text-sm font-medium text-slate-700">User</span>
+            <span className="text-sm font-medium text-slate-700">
+              {" "}
+              {user?.userName?.charAt(0).toUpperCase() +
+                user?.userName?.slice(1)}
+            </span>
           </MenuButton>
 
           <MenuItems
@@ -46,6 +59,10 @@ export default function Header({ toggle }: { toggle: () => void }) {
               <form onClick={() => navigate("/login")}>
                 <MenuItem>
                   <button
+                    onClick={() => {
+                      localStorage.removeItem("accessToken");
+                      dispatch(logout());
+                    }}
                     type="submit"
                     className="block w-full px-4 py-2 text-left text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
                   >

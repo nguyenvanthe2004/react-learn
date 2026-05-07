@@ -32,11 +32,13 @@ const sizeClasses: Record<ViewButtonSize, string> = {
   sm: "text-xs px-2 py-1 gap-1",
   md: "text-xs px-3 py-1.5 gap-1.5",
   lg: "text-sm px-4 py-2 gap-2",
+
 };
 
 export const Button: React.FC<{
   icon?: React.ReactNode;
   label?: string;
+  width?: string;
   active?: boolean;
   onClick?: () => void;
   variant?: ViewButtonVariant;
@@ -47,6 +49,7 @@ export const Button: React.FC<{
 }> = ({
   icon,
   label,
+  width,
   active = false,
   onClick,
   variant = "default",
@@ -59,7 +62,7 @@ export const Button: React.FC<{
     <button
       type={type}
       onClick={onClick}
-      className={`w-full bg-black text-white flex ${vertical ? "flex-col" : "flex-row"} items-center justify-center rounded-lg font-medium transition-all duration-150 ${iconOnly ? "p-2" : sizeClasses[size]} ${active ? variantClasses[variant].active : variantClasses[variant].inactive}`}
+      className={`${width} bg-black text-white flex ${vertical ? "flex-col" : "flex-row"} items-center justify-center rounded-lg font-medium transition-all duration-150 ${iconOnly ? "p-2" : sizeClasses[size]} ${active ? variantClasses[variant].active : variantClasses[variant].inactive}`}
     >
       {icon}
       {!iconOnly && label}

@@ -1,6 +1,7 @@
 import { Camera, Eye, EyeOff, Shield, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
 import type { PasswordField } from "../../types/user";
+import { Button } from "../ui/Button";
 
 const FAKE_USER = {
   fullName: "Nguyễn Văn A",
@@ -9,8 +10,6 @@ const FAKE_USER = {
   avatar:
     "https://tuanluupiano.com/wp-content/uploads/2026/01/avatar-facebook-mac-dinh-6.jpg",
 };
-
-
 
 export default function Profile() {
   const [user, setUser] = useState(FAKE_USER);
@@ -30,9 +29,21 @@ export default function Profile() {
     setShowPw((prev) => ({ ...prev, [field]: !prev[field] }));
 
   const passwordFields = [
-    { id: "current" as PasswordField, label: "Current Password", placeholder: "Enter current password" },
-    { id: "new" as PasswordField, label: "New Password", placeholder: "Enter new password" },
-    { id: "confirm" as PasswordField, label: "Confirm New Password", placeholder: "Confirm new password" },
+    {
+      id: "current" as PasswordField,
+      label: "Current Password",
+      placeholder: "Enter current password",
+    },
+    {
+      id: "new" as PasswordField,
+      label: "New Password",
+      placeholder: "Enter new password",
+    },
+    {
+      id: "confirm" as PasswordField,
+      label: "Confirm New Password",
+      placeholder: "Confirm new password",
+    },
   ];
 
   return (
@@ -41,7 +52,7 @@ export default function Profile() {
         {/* Header */}
         <div className="mb-8 pt-12 lg:pt-0">
           <h1 className="text-2xl font-black text-[#1c140d] tracking-tight">
-            Thông tin cá nhân 
+            Thông tin cá nhân
           </h1>
           <p className="text-[#9c7349] text-xs mt-1">
             Quản lý hồ sơ và tùy chọn bảo mật của bạn.
@@ -69,7 +80,9 @@ export default function Profile() {
                 </label>
               </div>
               <div>
-                <p className="font-bold text-[#1c140d] text-base">{user.fullName}</p>
+                <p className="font-bold text-[#1c140d] text-base">
+                  {user.fullName}
+                </p>
                 <p className="text-[#9c7349] text-xs mt-0.5">
                   Click the camera icon to update your photo.
                 </p>
@@ -80,12 +93,16 @@ export default function Profile() {
           {/* Personal Information */}
           <div className="bg-white rounded-2xl border border-[#e8dbce] shadow-sm overflow-hidden">
             <div className="px-5 py-3.5 border-b border-[#e8dbce]">
-              <h2 className="text-sm font-bold text-[#1c140d]">Personal Information</h2>
+              <h2 className="text-sm font-bold text-[#1c140d]">
+                Personal Information
+              </h2>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-[#1c140d]">Full Name</label>
+                  <label className="text-xs font-semibold text-[#1c140d]">
+                    Full Name
+                  </label>
                   <input
                     maxLength={100}
                     defaultValue={user.fullName}
@@ -94,7 +111,9 @@ export default function Profile() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-[#1c140d]">Phone</label>
+                  <label className="text-xs font-semibold text-[#1c140d]">
+                    Phone
+                  </label>
                   <input
                     maxLength={20}
                     defaultValue={user.phone}
@@ -106,7 +125,9 @@ export default function Profile() {
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-[#1c140d]">
                   Email{" "}
-                  <span className="font-normal text-[#9c7349]">(Read-only)</span>
+                  <span className="font-normal text-[#9c7349]">
+                    (Read-only)
+                  </span>
                 </label>
                 <input
                   type="email"
@@ -119,9 +140,7 @@ export default function Profile() {
                 </p>
               </div>
               <div className="flex justify-end pt-1">
-                <button className="bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white font-semibold text-sm px-5 py-2 rounded-lg transition-all">
-                  Save Changes
-                </button>
+                <Button label="Save Changes" size="lg" width="w-30" />
               </div>
             </div>
           </div>
@@ -147,7 +166,11 @@ export default function Profile() {
                 </div>
               </div>
               <div className="text-[#c4a882]">
-                {showPasswordSection ? <X size={16} /> : <ChevronRight size={16} />}
+                {showPasswordSection ? (
+                  <X size={16} />
+                ) : (
+                  <ChevronRight size={16} />
+                )}
               </div>
             </button>
 
@@ -156,7 +179,9 @@ export default function Profile() {
               <div className="border-t border-[#e8dbce] px-5 py-5 bg-[#fffcf9] space-y-3">
                 {passwordFields.map(({ id, label, placeholder }) => (
                   <div key={id} className="flex flex-col gap-1.5">
-                    <label className="text-xs font-semibold text-[#1c140d]">{label}</label>
+                    <label className="text-xs font-semibold text-[#1c140d]">
+                      {label}
+                    </label>
                     <div className="relative">
                       <input
                         type={showPw[id] ? "text" : "password"}
@@ -174,9 +199,7 @@ export default function Profile() {
                   </div>
                 ))}
                 <div className="flex justify-end pt-2">
-                  <button className="bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white font-semibold text-sm px-5 py-2 rounded-lg transition-all">
-                    Update Password
-                  </button>
+                  <Button label="Update Password" size="lg" width="w-30" />
                 </div>
               </div>
             )}
@@ -186,8 +209,12 @@ export default function Profile() {
           <div className="flex items-center justify-between px-1 pt-1 text-[#9c7349]">
             <p className="text-[10px]">Member since March 2023</p>
             <div className="flex gap-4">
-              <a href="#" className="text-[10px] hover:underline">Privacy Policy</a>
-              <a href="#" className="text-[10px] hover:underline">Terms of Service</a>
+              <a href="#" className="text-[10px] hover:underline">
+                Privacy Policy
+              </a>
+              <a href="#" className="text-[10px] hover:underline">
+                Terms of Service
+              </a>
             </div>
           </div>
         </div>

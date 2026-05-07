@@ -1,8 +1,36 @@
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toastError, toastSuccess } from "../../lib/toast";
+import { callLogin } from "../../services/auth";
+import { loginSchema, type LoginFormData } from "../../validations/auth";
 import { Button } from "../ui/Button";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "../../redux/slices/currentUser";
 
 export default function LoginForm() {
-  const handleSubmit = () => {
-    console.log("Đăng nhập thành công!");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    mode: "onChange",
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const res = await callLogin(data);
+      console.log(res)
+      toastSuccess("Đăng nhập thành công!");
+      navigate("/");
+      dispatch(setCurrentUser(res.data.user));
+    } catch (error: any) {
+      toastError(error.message);
+    }
   };
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
@@ -16,10 +44,6 @@ export default function LoginForm() {
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
             className="space-y-5"
           >
             <div>
@@ -30,10 +54,13 @@ export default function LoginForm() {
                 Email
               </label>
               <input
-                id="email"
-                type="email"
+                {...register("userNameOrEmail")}
                 placeholder="ban@email.com"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                className={`w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition ${
+                  errors.userNameOrEmail
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-orange-500"
+                } `}
               />
             </div>
 
@@ -53,10 +80,14 @@ export default function LoginForm() {
                 </a>
               </div>
               <input
-                id="password"
+                {...register("password")}
                 type="password"
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                className={`w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition ${
+                  errors.password
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-orange-500"
+                }`}
               />
             </div>
 
@@ -78,6 +109,8 @@ export default function LoginForm() {
               label="Đăng nhập"
               type="submit"
               size="lg"
+              width="w-full"
+              onClick={handleSubmit(onSubmit)}
             />
           </form>
 

@@ -1,9 +1,12 @@
-import { Eye, Search, ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { Search, ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { STATUS_LABELS } from "../../constants";
 import type { Status, User } from "../../types/user";
-import EllipsisMenu from "../ui/EllipsisMenu";
 import CustomTable from "../ui/CustomTable";
+import EllipsisMenu from "../ui/EllipsisMenu";
+import { toastSuccess } from "../../lib/toast";
+import { useModal } from "../../hooks/useModal";
+import UpdateUserModal from "./UpdateUserModal";
 
 const FAKE_USERS: User[] = [
   {
@@ -69,9 +72,9 @@ export default function UserManager() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<Status | "">("");
   const [orgFilter, setOrgFilter] = useState("");
-  const [users, setUsers] = useState<User[]>(FAKE_USERS);
- 
-  const filtered = users.filter((u) => {
+  const { isOpen, open, close } = useModal();
+
+  const filtered = FAKE_USERS.filter((u) => {
     const q = search.toLowerCase();
     const matchQ =
       !q ||
@@ -83,7 +86,18 @@ export default function UserManager() {
     const matchO = !orgFilter || u.org === orgFilter;
     return matchQ && matchS && matchO;
   });
- 
+
+  const handleEditClick = () => {
+    open();
+  };
+  const handleUpdate = () => {
+    toastSuccess("Cập nhật thành công người dùng!");
+  }
+
+  const handleDeleteClick = () => {
+    toastSuccess("Xóa người dùng thành công!");
+  };
+
   const columns = [
     {
       key: "stt",
@@ -100,25 +114,22 @@ export default function UserManager() {
       title: "Hành động",
       headerClassName: "w-24",
       render: (row: User) => (
-        <div className="flex items-center gap-1.5">
-          <button className="w-7 h-7 flex items-center justify-center border border-[#e8dbce] rounded-lg text-[#9c7349] hover:bg-[#fff0e0] hover:text-orange-500 hover:border-orange-300 transition-colors">
-            <Eye size={13} />
-          </button>
+        <div className="flex items-center justify-center gap-1.5">
           <EllipsisMenu
-            align="left"
             actions={[
               {
-                label: "Chỉnh sửa",
-                icon: <Pencil size={13} />,
-                onClick: () => alert(`Sửa: ${row.fullName}`),
+                label: "Edit",
+                icon: <Pencil className="w-4 h-4" />,
+                onClick: () => handleEditClick(),
               },
               {
-                label: "Xóa người dùng",
-                icon: <Trash2 size={13} />,
+                label: "Delete",
+                icon: <Trash2 className="w-4 h-4" />,
+                onClick: () => handleDeleteClick(),
                 variant: "danger",
-                onClick: () => setUsers((prev) => prev.filter((u) => u.id !== row.id)),
               },
             ]}
+            align="left"
           />
         </div>
       ),
@@ -159,7 +170,7 @@ export default function UserManager() {
     },
     {
       key: "alias",
-      title: "Tên nhóm",
+      title: "Trạng thái",
       render: (row: User) => (
         <span
           className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -173,7 +184,7 @@ export default function UserManager() {
       ),
     },
   ];
- 
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="mx-10 py-5">
@@ -186,15 +197,20 @@ export default function UserManager() {
             Xem và quản lý tất cả tài khoản trong hệ thống.
           </p>
         </div>
- 
+
         {/* Filter bar */}
         <div className="bg-white rounded-2xl border border-[#e8dbce] shadow-sm p-4 mb-3">
           <div className="grid grid-cols-3 gap-3">
             {/* Search */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-[#1c140d]">Tìm kiếm</label>
+              <label className="text-xs font-semibold text-[#1c140d]">
+                Tìm kiếm
+              </label>
               <div className="relative">
-                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#b09070]" />
+                <Search
+                  size={13}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#b09070]"
+                />
                 <input
                   type="text"
                   value={search}
@@ -204,27 +220,36 @@ export default function UserManager() {
                 />
               </div>
             </div>
- 
+
             {/* Status filter */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-[#1c140d]">Trạng thái</label>
+              <label className="text-xs font-semibold text-[#1c140d]">
+                Trạng thái
+              </label>
               <div className="relative">
                 <select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as Status | "")}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as Status | "")
+                  }
                   className="w-full appearance-none px-3 py-2 pr-8 border border-[#e8dbce] rounded-lg text-sm text-[#1c140d] bg-white focus:outline-none focus:ring-1 focus:ring-orange-300 focus:border-orange-400 transition"
                 >
                   <option value="">--Chọn trạng thái--</option>
                   <option value="active">Hoạt động</option>
                   <option value="inactive">Lưu nháp</option>
                 </select>
-                <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b09070] pointer-events-none" />
+                <ChevronDown
+                  size={13}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b09070] pointer-events-none"
+                />
               </div>
             </div>
- 
+
             {/* Org filter */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-[#1c140d]">Tổ chức</label>
+              <label className="text-xs font-semibold text-[#1c140d]">
+                Tổ chức
+              </label>
               <div className="relative">
                 <select
                   value={orgFilter}
@@ -233,31 +258,40 @@ export default function UserManager() {
                 >
                   <option value="">-Chọn vị trí-</option>
                   {ORGS.map((o) => (
-                    <option key={o} value={o}>{o}</option>
+                    <option key={o} value={o}>
+                      {o}
+                    </option>
                   ))}
                 </select>
-                <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b09070] pointer-events-none" />
+                <ChevronDown
+                  size={13}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b09070] pointer-events-none"
+                />
               </div>
             </div>
           </div>
         </div>
- 
+
         {/* Table */}
         <CustomTable
-          data={FAKE_USERS}
+          data={filtered}
           columns={columns}
           emptyText="Không tìm thấy dữ liệu"
           className="min-w-[900px] bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-[#e8f0f2] overflow-hidden"
         />
- 
+
         {/* Footer */}
         <div className="px-1 py-3 flex items-center justify-between">
           <p className="text-xs text-[#9c7349]">
-            Hiển thị {filtered.length} / {users.length} bản ghi
+            Hiển thị {filtered.length} / {FAKE_USERS.length} bản ghi
           </p>
         </div>
       </div>
+      <UpdateUserModal
+        isOpen={isOpen}
+        onClose={close}
+        onSave={handleUpdate}
+      />
     </div>
-    
   );
 }

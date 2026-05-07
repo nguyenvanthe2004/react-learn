@@ -1,5 +1,7 @@
 import { LayoutDashboard, Users, Settings, ChevronRight } from "lucide-react";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import type { RootState } from "../../redux/store";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Thống kê", path: "/" },
@@ -11,6 +13,9 @@ export default function Sidebar({ isOpen }: { isOpen: boolean }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isActive = (path: string) => pathname === path;
+
+  const user = useSelector((state: RootState) => state.auth.currentUser);
+
   return (
     <aside
       className={`relative flex flex-col bg-slate-900 text-white h-full transition-all duration-300 ease-in-out overflow-hidden ${
@@ -74,7 +79,9 @@ export default function Sidebar({ isOpen }: { isOpen: boolean }) {
       >
         <div className="group flex items-center gap-3 px-2.5 py-2 rounded-xl hover:bg-slate-700/40 cursor-pointer transition-colors overflow-hidden">
           <div className="w-7 h-7 rounded-full bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0">
-            <span className="text-indigo-300 text-xs font-semibold">U</span>
+            <span className="text-indigo-300 text-xs font-semibold">
+              {user.userName.charAt(0).toUpperCase()}
+            </span>
           </div>
 
           <div
@@ -83,10 +90,11 @@ export default function Sidebar({ isOpen }: { isOpen: boolean }) {
             }`}
           >
             <p className="text-xs font-medium text-white whitespace-nowrap">
-              User Name
+              {user?.userName?.charAt(0).toUpperCase() +
+                user?.userName?.slice(1)}
             </p>
             <p className="text-xs text-slate-500 whitespace-nowrap">
-              user@email.com
+              {user.email}
             </p>
           </div>
         </div>
